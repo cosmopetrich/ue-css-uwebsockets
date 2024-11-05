@@ -1,6 +1,6 @@
 # ue-css-uwebsockets
 
-A version of the [uWebSockets](https://github.com/uNetworking/uWebSockets) C++ library built for use in Satisfactory modding.
+A version of the [uWebSockets](https://github.com/uNetworking/uWebSockets) C++ library built with [vcpkg](https://github.com/microsoft/vcpkg) for use in Satisfactory modding.
 
 - Uses the directory structure that UE expects.
 - Includes libraries for both Linux and Windows.
