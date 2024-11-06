@@ -1,0 +1,1 @@
+https://github.com/cosmopetrich/ue-css-uwebsockets/releases/download/v20.67.0-1/uWebSockets-20.67.0-1.zip
