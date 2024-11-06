@@ -35,10 +35,10 @@ jobs:
         include:
           - platform: Linux
             os: ubuntu-22.04
-            triplet: x64-linux
+            triplet: x64-linux-release
           - platform: Win64
             os: windows-2022
-            triplet: x64-windows-static-md
+            triplet: x64-windows-static-md-release
             msvc-version: "14.34-17.4"
             toolset-version: "14.34.31933"  
     steps:

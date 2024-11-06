@@ -23,10 +23,19 @@ The commands below assume that you're using the "Git Bash" command-line included
    ```bash
    cd SatisfactoryModLoader/Mods/MyMod
    git submodule add https://github.com/cosmopetrich/ue-css-uwebsockets Source/uWebSockets
-   git commit -m "Add uWebSockets" uWebSockets .gitmodules
    ```
 
-2. Add a note to your `CONTRIBUTING.md` or equivilant so that contributors know what to do.
+2. Update your mod's Build.cs file as normal.
+
+   ```cs
+   PrivateDependencyModuleNames.AddRange(new string[] {
+     // [...]
+     "uWebSockets",
+     // [...]
+   });
+   ```
+
+3. Add a note to your `CONTRIBUTING.md` or equivilant so that contributors know what to do.
 
    ```markdown
    When updating the repository, be sure to also update the submodules.
@@ -35,8 +44,7 @@ The commands below assume that you're using the "Git Bash" command-line included
 
    You can also set git up to do this automatically when you run a regular `git pull`.
 
-    :wq
-git config submodule.recurse true
+       git config submodule.recurse true
    ```
 
 3. Retrieve the files.
@@ -52,9 +60,7 @@ To update
 1. Update the submodule.
 
    ```bash
-   cd Source/uWebSockets
-   git pull
-   cd -
+   git -C Source/uWebSockets pull
    git commit -m "Update uWebSockets" Source/uWebsockets .gitmodules
    ```
 
