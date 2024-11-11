@@ -24,10 +24,6 @@ jobs:
   install:
     name: Install
     runs-on: ${{ matrix.os }}
-    outputs:
-      baseline: ${{ steps.vcpkg.outputs.baseline }}
-      baseline-short: ${{ steps.vcpkg.outputs.baseline-short }}
-      toolset-version: ${{ steps.vcpkg.outputs.toolset-version }}
     strategy:
       fail-fast: false
       matrix:
@@ -54,7 +50,6 @@ jobs:
           version: ${{ matrix.msvc-version }}
           toolset-version: ${{ matrix.toolset-version }}
       - name: Run vcpkg
-        id: vcpkg
         uses: cosmopetrich/vcpkg-manifest-install-action@dev
         with:
           output-directory: vcpkg-output
@@ -70,7 +65,7 @@ jobs:
   release:
     name: Release
     needs: install
-    #if: ${{ github.ref == 'refs/heads/master' }}
+    if: ${{ github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
