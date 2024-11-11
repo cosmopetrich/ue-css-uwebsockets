@@ -1,0 +1,84 @@
+name: Build
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - .vcpkg/**
+  push:
+    branches:
+      - master
+    paths:
+      - .vcpkg/**
+
+concurrency:
+  group: ${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  install:
+    name: Install
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [Linux, Win64]
+        include:
+          - platform: Linux
+            os: ubuntu-22.04
+            triplet: x64-linux-release
+          - platform: Win64
+            os: windows-2022
+            triplet: x64-windows-static-md-release
+            msvc-version: "14.34-17.4"
+            toolset-version: "14.34.31933"  
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          path: repo
+          sparse-checkout: .vcpkg
+      - name: Install MSVC
+        if: ${{ matrix.msvc-version && matrix.toolset-version }}
+        uses: cosmopetrich/vs-msvc-component-install-action@dev
+        with:
+          version: ${{ matrix.msvc-version }}
+          toolset-version: ${{ matrix.toolset-version }}
+      - name: Run vcpkg
+        uses: cosmopetrich/vcpkg-manifest-install-action@dev
+        with:
+          output-directory: vcpkg-output
+          triplet: ${{ matrix.triplet }}
+          vcpkg-manifest: repo/.vcpkg/vcpkg.json
+          vcpkg-platform-toolset-version: ${{ matrix.toolset-version }}
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.platform }}
+          path: vcpkg-output/*
+          if-no-files-found: error
+  release:
+    name: Release
+    needs: install
+    if: ${{ github.ref == 'refs/heads/master' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          path: repo
+      - name: Retrieve artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - name: Create release
+        uses: cosmopetrich/ue-thirdparty-release-action@dev
+        with:
+          artifacts-directory: artifacts
+          package-name: uWebSockets
+          repo-directory: repo
